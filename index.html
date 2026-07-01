@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日進場危害告知表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--card:#ffffff;--blue:#1565C0;--blue-light:#1976D2;
+  --blue-pale:#E3F2FD;--blue-mid:#BBDEFB;--text:#1a2a3a;--text-sub:#3a5068;
+  --text-muted:#6a8099;--border:#C5D8EC;--border-hi:#1565C0;
+  --success:#2E7D32;--success-bg:#E8F5E9;--radius:14px;
+  --shadow:0 2px 12px rgba(21,101,192,0.10);
+}
+html{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;font-size:17.5px;line-height:1.65}
+body{min-height:100vh;padding:0 0 80px}
+
+/* ── top banner ── */
+.top-banner{background:linear-gradient(135deg,#1565C0 0%,#1976D2 60%,#0D47A1 100%);
+  padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 3px 12px rgba(21,101,192,0.25)}
+.banner-icon{width:56px;height:56px;border-radius:50%;overflow:hidden;
+  flex-shrink:0;display:block}
+.banner-text .t1{color:#fff;font-size:18px;font-weight:700;letter-spacing:1px}
+.banner-text .t2{color:rgba(180,215,255,0.9);font-size:11px;letter-spacing:2px;margin-top:2px}
+.banner-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.status-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);
+  border-radius:20px;padding:5px 12px}
+.status-dot{width:9px;height:9px;border-radius:50%;background:#4CAF50;
+  box-shadow:0 0 6px #4CAF50;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.status-txt{color:rgba(255,255,255,0.9);font-size:12px}
+
+/* ── language selector ── */
+.lang-select{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.35);
+  color:#fff;border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer;
+  font-family:inherit;outline:none;appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='white' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+.lang-select option{background:#1565C0;color:#fff}
+
+.page{max-width:900px;margin:0 auto;padding:22px 16px}
+
+/* ── AI guide ── */
+.ai-guide{background:var(--card);border:2px solid var(--blue-mid);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:20px;display:flex;gap:16px;align-items:flex-start;
+  box-shadow:var(--shadow);position:relative;overflow:hidden}
+.ai-guide::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#1565C0,#42A5F5,#1565C0)}
+.ai-avatar{flex-shrink:0;text-align:center}
+.avatar-circle{width:76px;height:76px;border-radius:50%;overflow:hidden;
+  border:3px solid var(--blue-mid);display:block;
+  margin-bottom:6px;position:relative;flex-shrink:0}
+.avatar-badge{position:absolute;bottom:2px;right:2px;background:#4CAF50;border-radius:50%;
+  width:20px;height:20px;border:2px solid #fff;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:#fff;z-index:2}
+.avatar-name{font-size:14px;font-weight:700;color:var(--blue)}
+.avatar-role{font-size:11px;color:var(--text-muted)}
+.ai-bubble{background:var(--blue-pale);border-radius:0 12px 12px 12px;
+  padding:14px 16px;flex:1;position:relative;border:1px solid var(--blue-mid)}
+.ai-bubble::before{content:'';position:absolute;left:-10px;top:22px;
+  border:5px solid transparent;border-right-color:var(--blue-mid)}
+.ai-bubble::after{content:'';position:absolute;left:-8px;top:23px;
+  border:4px solid transparent;border-right-color:var(--blue-pale)}
+.bubble-text{font-size:16px;color:var(--text);line-height:1.7;min-height:44px}
+.bubble-text .hi{color:var(--blue);font-weight:700}
+.speak-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  background:var(--blue);color:#fff;border:none;border-radius:8px;
+  padding:7px 14px;font-size:14px;cursor:pointer;font-family:inherit;transition:background 0.2s}
+.speak-btn:hover{background:var(--blue-light)}
+.speak-btn.playing{animation:speakPulse 1s infinite}
+@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(21,101,192,0.4)}50%{box-shadow:0 0 0 6px rgba(21,101,192,0)}}
+
+/* ── meta ── */
+.meta-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.meta-card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;box-shadow:var(--shadow)}
+.meta-label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.meta-val{font-size:17px;font-weight:600;color:var(--blue)}
+
+/* ── progress ── */
+.progress-wrap{margin-bottom:16px;background:var(--card);border-radius:10px;
+  padding:14px 18px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-title{font-size:15px;font-weight:600;color:var(--text-sub)}
+.progress-count{font-size:15px;font-weight:700;color:var(--blue)}
+.progress-bar-bg{height:8px;background:var(--blue-pale);border-radius:4px}
+.progress-bar{height:8px;background:linear-gradient(90deg,#1565C0,#42A5F5);
+  border-radius:4px;transition:width 0.5s ease;width:0%}
+.progress-steps{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.step-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--text-muted);transition:all 0.3s;cursor:default}
+.step-dot.done{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ── hazard card ── */
+.hazard-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);transition:border-color 0.3s,box-shadow 0.3s}
+.hazard-card.active{border-color:var(--blue);box-shadow:0 4px 20px rgba(21,101,192,0.15)}
+.hazard-card.read-done{border-left:4px solid #4CAF50}
+.card-header{display:flex;align-items:center;gap:12px;padding:14px 18px;
+  cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:background 0.2s}
+.card-header:hover{background:var(--blue-pale)}
+.card-header.open{border-bottom-color:var(--border)}
+.cat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:24px;flex-shrink:0}
+.cat-badge{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;
+  letter-spacing:0.5px;white-space:nowrap;flex-shrink:0}
+.card-title-wrap{flex:1;min-width:0}
+.card-title{font-size:17px;font-weight:700;color:var(--text)}
+.card-title-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.card-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.card-speak{background:var(--blue-pale);border:1px solid var(--blue-mid);color:var(--blue);
+  border-radius:8px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:5px;white-space:nowrap}
+.card-speak:hover{background:var(--blue-mid)}
+.read-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;transition:all 0.3s}
+.read-check.done{background:#4CAF50;border-color:#4CAF50;color:#fff}
+.chevron{font-size:14px;color:var(--text-muted);transition:transform 0.3s;flex-shrink:0}
+.chevron.open{transform:rotate(180deg)}
+
+/* category colours */
+.fall .card-header{background:#FFF8F5}.fall .cat-icon{background:#FF6D00;color:#fff}.fall .cat-badge{background:#FFF3E0;color:#E65100;border:1px solid #FFAB40}
+.elec .card-header{background:#FFFBF0}.elec .cat-icon{background:#F9A825;color:#fff}.elec .cat-badge{background:#FFF8E1;color:#E65100;border:1px solid #FFCA28}
+.obj .card-header{background:#F5FBF5}.obj .cat-icon{background:#2E7D32;color:#fff}.obj .cat-badge{background:#E8F5E9;color:#1B5E20;border:1px solid #66BB6A}
+.col .card-header{background:#FFF5F5}.col .cat-icon{background:#C62828;color:#fff}.col .cat-badge{background:#FCE4EC;color:#B71C1C;border:1px solid #EF9A9A}
+.fire .card-header{background:#FFF5F5}.fire .cat-icon{background:#D32F2F;color:#fff}.fire .cat-badge{background:#FFF0F0;color:#B71C1C;border:1px solid #EF9A9A}
+.mach .card-header{background:#F5F8FF}.mach .cat-icon{background:#1565C0;color:#fff}.mach .cat-badge{background:#E3F2FD;color:#0D47A1;border:1px solid #90CAF9}
+.chem .card-header{background:#F8F5FF}.chem .cat-icon{background:#6A1B9A;color:#fff}.chem .cat-badge{background:#EDE7F6;color:#4A148C;border:1px solid #CE93D8}
+.gen .card-header{background:#F5F7F8}.gen .cat-icon{background:#455A64;color:#fff}.gen .cat-badge{background:#ECEFF1;color:#263238;border:1px solid #90A4AE}
+
+.item-list{padding:6px 18px 16px;animation:slideDown 0.25s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f0f4f8;
+  font-size:16px;color:var(--text-sub);line-height:1.65}
+.item:last-child{border-bottom:none}
+.item-num{font-size:13px;font-weight:700;color:var(--blue);min-width:24px;padding-top:2px;font-family:monospace}
+
+/* ── signature ── */
+.sig-card{background:var(--card);border:2px solid var(--border-hi);border-radius:var(--radius);
+  padding:22px 24px;margin-top:22px;box-shadow:0 4px 20px rgba(21,101,192,0.12)}
+.sig-head{font-size:20px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.sig-desc{font-size:14px;color:var(--text-muted);margin-bottom:16px}
+.sig-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.sig-field label{font-size:13px;font-weight:600;color:var(--text-sub);display:block;margin-bottom:6px}
+.sig-field input{width:100%;background:#F8FAFE;border:1.5px solid var(--border);border-radius:8px;
+  padding:9px 13px;color:var(--text);font-size:16px;font-family:inherit;outline:none;transition:border-color 0.2s}
+.sig-field input:focus{border-color:var(--blue);background:#fff}
+.canvas-wrap{position:relative;border:2px solid var(--border);border-radius:10px;
+  background:#FAFCFF;margin-bottom:12px;overflow:hidden}
+#sig-canvas{display:block;width:100%;height:130px;cursor:crosshair;touch-action:none}
+.canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;font-size:16px;color:var(--text-muted);pointer-events:none}
+.canvas-hint-icon{font-size:30px;display:block;margin-bottom:4px}
+.btn-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.btn{font-size:15px;padding:9px 18px;border:1.5px solid var(--border);border-radius:8px;
+  background:#fff;color:var(--text-sub);cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn-confirm{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.btn-confirm:hover{background:#1976D2}
+.btn-confirm:disabled{background:#B0BEC5;border-color:#B0BEC5;cursor:not-allowed}
+.sig-note{font-size:13px;color:var(--text-muted)}
+
+/* ── confirm ── */
+.confirm-box{display:none;background:var(--success-bg);border:2px solid #4CAF50;
+  border-radius:var(--radius);padding:26px;margin-top:22px;text-align:center;animation:fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.confirm-box.show{display:block}
+.confirm-icon{font-size:52px;margin-bottom:10px}
+.confirm-title{font-size:22px;font-weight:700;color:var(--success);margin-bottom:6px}
+.confirm-body{font-size:16px;color:#388E3C;margin-bottom:6px}
+.confirm-stamp{font-size:13px;color:#66BB6A}
+
+/* ── toast ── */
+.tip-toast{position:fixed;bottom:24px;right:24px;max-width:300px;
+  background:var(--blue);color:#fff;border-radius:12px;padding:14px 16px;
+  font-size:15px;line-height:1.5;box-shadow:0 4px 20px rgba(21,101,192,0.35);
+  z-index:999;display:none;animation:slideUp 0.3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.tip-head{font-weight:700;font-size:13px;opacity:0.8;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.tip-close{margin-left:auto;cursor:pointer;opacity:0.7;font-size:16px}
+
+@media(max-width:600px){
+  .meta-strip{grid-template-columns:1fr 1fr}
+  .sig-fields{grid-template-columns:1fr}
+  .banner-text .t2{display:none}
+  .card-title-sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Top banner -->
+<div class="top-banner">
+  <div class="banner-icon" style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:2.5px solid rgba(255,255,255,0.5);padding:0;background:none;flex-shrink:0">
+      <img src="data:image/jpeg;base64,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" style="width:100%;height:110%;margin-top:-10%;object-fit:cover;object-position:center top" alt="工程妹妹">
+    </div>
+  <div class="banner-text">
+    <div class="t1" id="banner-title">每日進場危害告知系統</div>
+    <div class="t2">DAILY HAZARD NOTIFICATION · CONSTRUCTION SAFETY</div>
+  </div>
+  <div class="banner-right">
+    <select class="lang-select" id="lang-select" onchange="switchLang(this.value)">
+      <option value="zh">🇹🇼 繁體中文</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="th">🇹🇭 ภาษาไทย</option>
+      <option value="id">🇮🇩 Indonesia</option>
+    </select>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      <div class="status-txt" id="status-txt">系統運行中</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- AI guide -->
+  <div class="ai-guide">
+    <div class="ai-avatar">
+      <div class="avatar-circle" style="overflow:hidden;padding:0;background:none;border:3px solid var(--blue-mid)">
+        <img src="data:image/jpeg;base64,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" style="width:100%;height:110%;margin-top:-10%;object-fit:cover;object-position:center top;display:block" alt="工程妹妹">
+        <div class="avatar-badge">✓</div>
+      </div>
+      <div class="avatar-name" id="ai-name">工程妹妹</div>
+      <div class="avatar-role" id="ai-role">安全引導員</div>
+    </div>
+    <div class="ai-bubble">
+      <div class="bubble-text" id="guide-text"></div>
+      <button class="speak-btn" id="main-speak-btn" onclick="speakGuide(this)">🔊 <span id="speak-label">播放語音說明</span></button>
+    </div>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-strip">
+    <div class="meta-card">
+      <div class="meta-label" id="meta-proj-label">工程名稱</div>
+      <div class="meta-val" id="meta-proj-val">施工工地</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-label" id="meta-date-label">施工日期</div>
+      <div class="meta-val" id="today-date">—</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-label" id="meta-day-label">天候</div>
+      <div class="meta-val" id="today-day">—</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <div class="progress-title" id="prog-title">📋 危害告知閱讀進度</div>
+      <div class="progress-count" id="read-count">0 / 8</div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar" id="read-bar"></div></div>
+    <div class="progress-steps" id="progress-steps"></div>
+  </div>
+
+  <!-- === Hazard Cards === -->
+  <div class="hazard-card fall" data-sec="1">
+    <div class="card-header" onclick="toggleCard(1)">
+      <div class="cat-icon">⬇️</div>
+      <span class="cat-badge" data-key="cat1"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title1"></div>
+        <div class="card-title-sub" data-key="sub1"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,1)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-1"></div>
+        <div class="chevron" id="chev-1">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-1" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="fall-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="fall-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="fall-3"></span></div>
+      <div class="item"><span class="item-num">04</span><span data-key="fall-4"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card elec" data-sec="2">
+    <div class="card-header" onclick="toggleCard(2)">
+      <div class="cat-icon">⚡</div>
+      <span class="cat-badge" data-key="cat2"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title2"></div>
+        <div class="card-title-sub" data-key="sub2"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,2)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-2"></div>
+        <div class="chevron" id="chev-2">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-2" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="elec-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="elec-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="elec-3"></span></div>
+      <div class="item"><span class="item-num">04</span><span data-key="elec-4"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card obj" data-sec="3">
+    <div class="card-header" onclick="toggleCard(3)">
+      <div class="cat-icon">🪨</div>
+      <span class="cat-badge" data-key="cat3"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title3"></div>
+        <div class="card-title-sub" data-key="sub3"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,3)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-3"></div>
+        <div class="chevron" id="chev-3">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-3" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="obj-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="obj-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="obj-3"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card col" data-sec="4">
+    <div class="card-header" onclick="toggleCard(4)">
+      <div class="cat-icon">🏚️</div>
+      <span class="cat-badge" data-key="cat4"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title4"></div>
+        <div class="card-title-sub" data-key="sub4"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,4)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-4"></div>
+        <div class="chevron" id="chev-4">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-4" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="col-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="col-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="col-3"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card fire" data-sec="5">
+    <div class="card-header" onclick="toggleCard(5)">
+      <div class="cat-icon">🔥</div>
+      <span class="cat-badge" data-key="cat5"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title5"></div>
+        <div class="card-title-sub" data-key="sub5"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,5)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-5"></div>
+        <div class="chevron" id="chev-5">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-5" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="fire-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="fire-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="fire-3"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card mach" data-sec="6">
+    <div class="card-header" onclick="toggleCard(6)">
+      <div class="cat-icon">⚙️</div>
+      <span class="cat-badge" data-key="cat6"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title6"></div>
+        <div class="card-title-sub" data-key="sub6"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,6)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-6"></div>
+        <div class="chevron" id="chev-6">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-6" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="mach-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="mach-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="mach-3"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card chem" data-sec="7">
+    <div class="card-header" onclick="toggleCard(7)">
+      <div class="cat-icon">🧪</div>
+      <span class="cat-badge" data-key="cat7"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title7"></div>
+        <div class="card-title-sub" data-key="sub7"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,7)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-7"></div>
+        <div class="chevron" id="chev-7">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-7" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="chem-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="chem-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="chem-3"></span></div>
+    </div>
+  </div>
+
+  <div class="hazard-card gen" data-sec="8">
+    <div class="card-header" onclick="toggleCard(8)">
+      <div class="cat-icon">📋</div>
+      <span class="cat-badge" data-key="cat8"></span>
+      <div class="card-title-wrap">
+        <div class="card-title" data-key="title8"></div>
+        <div class="card-title-sub" data-key="sub8"></div>
+      </div>
+      <div class="card-actions">
+        <button class="card-speak" onclick="speakCard(event,8)">🔊 <span data-key="voice-btn"></span></button>
+        <div class="read-check" id="chk-8"></div>
+        <div class="chevron" id="chev-8">▼</div>
+      </div>
+    </div>
+    <div class="item-list" id="body-8" style="display:none">
+      <div class="item"><span class="item-num">01</span><span data-key="gen-1"></span></div>
+      <div class="item"><span class="item-num">02</span><span data-key="gen-2"></span></div>
+      <div class="item"><span class="item-num">03</span><span data-key="gen-3"></span></div>
+      <div class="item"><span class="item-num">04</span><span data-key="gen-4"></span></div>
+    </div>
+  </div>
+
+  <!-- Signature -->
+  <div class="sig-card" id="sig-area">
+    <div class="sig-head">✍️ <span data-key="sig-head"></span></div>
+    <div class="sig-desc" data-key="sig-desc"></div>
+    <div class="sig-fields">
+      <div class="sig-field"><label data-key="field-name"></label><input type="text" id="worker-name" data-key-ph="ph-name"></div>
+      <div class="sig-field"><label data-key="field-co"></label><input type="text" id="worker-co" data-key-ph="ph-co"></div>
+      <div class="sig-field"><label data-key="field-type"></label><input type="text" id="worker-type" data-key-ph="ph-type"></div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="sig-canvas" width="800" height="130"></canvas>
+      <div class="canvas-hint" id="canvas-hint">
+        <span class="canvas-hint-icon">✒️</span><span data-key="sig-hint"></span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="clearSig()">⟳ <span data-key="btn-clear"></span></button>
+      <button class="btn" onclick="speakSigGuide()">🔊 <span data-key="btn-voice"></span></button>
+      <button class="btn btn-confirm" id="confirm-btn" onclick="doConfirm()" disabled>✅ <span data-key="btn-confirm"></span></button>
+    </div>
+    <div class="sig-note" data-key="sig-note"></div>
+  </div>
+
+  <div class="confirm-box" id="confirm-box">
+    <div class="confirm-icon">🎉</div>
+    <div class="confirm-title" data-key="done-title"></div>
+    <div class="confirm-body" id="confirm-body"></div>
+    <div class="confirm-stamp" id="confirm-stamp"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="tip-toast" id="tip-toast">
+  <div class="tip-head">👩‍💼 <span id="toast-name"></span> <span class="tip-close" onclick="closeTip()">✕</span></div>
+  <div id="tip-msg"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// TRANSLATIONS
+// ══════════════════════════════════════════
+const LANG = {
+  zh:{
+    code:'zh-TW', aiName:'工程妹妹', aiRole:'安全引導員',
+    bannerTitle:'每日進場危害告知系統', statusTxt:'系統運行中',
+    speakLabel:'播放語音說明', voiceBtn:'語音',
+    metaProj:'工程名稱', metaDate:'施工日期', metaDay:'今日天候',
+    progTitle:'📋 危害告知閱讀進度',
+    guideWelcome:'早安！歡迎進場。請您仔細閱讀今日所有危害告知項目，閱讀完畢後在下方完成簽名，確認您已了解今日作業風險。讓我們一起打造安全的工作環境！💪',
+    guideReading:'很好！您已開始閱讀危害告知。點擊每個項目可展開詳細內容，也可以點「🔊 語音」聆聽我的說明。',
+    guideMid:'進度不錯！繼續閱讀剩餘的告知項目，每一項都很重要喔！',
+    guideAlmost:'快完成了！請繼續閱讀最後幾項危害告知，確保您了解所有安全規定。',
+    guideDone:'所有危害告知均已閱讀完畢！請填寫下方姓名資訊，並在簽名板上完成手寫簽名。✍️',
+    toastStart:'點擊各項目卡片可展開詳細內容，也可點 🔊 語音聆聽工程妹妹說明！',
+    toastDone:'太棒了！所有危害告知均已閱讀完畢，請填寫下方資訊並完成簽名。',
+    cat1:'墜落危害',cat2:'感電危害',cat3:'物體飛落',cat4:'崩塌危害',
+    cat5:'火災爆炸',cat6:'機械設備',cat7:'化學品',cat8:'一般規定',
+    title1:'高處墜落危害告知',title2:'電氣感電危害告知',title3:'物體飛落／墜落危害告知',title4:'倒塌／崩塌危害告知',
+    title5:'火災／爆炸危害告知',title6:'機械設備危害告知',title7:'化學品／有害物質危害告知',title8:'工地安全一般規定',
+    sub1:'Fall from Height',sub2:'Electrical Shock',sub3:'Falling Objects',sub4:'Collapse',
+    sub5:'Fire & Explosion',sub6:'Machinery',sub7:'Chemical Hazard',sub8:'General Safety',
+    'fall-1':'凡距地面 2 公尺以上之高處作業，應確認護欄、安全網或安全帶設置完備，始得進行作業。',
+    'fall-2':'開口部（樓板開口、採光井、電梯坑道等）均應有防墜覆蓋或圍欄，作業前確認覆蓋物穩固。',
+    'fall-3':'鷹架及施工架上作業時，確認腳踏板鋪設完整、固定確實，嚴禁在未固定踏板上站立。',
+    'fall-4':'梯子使用前應確認固定、梯腳防滑，禁止超高使用或單手持物攀爬。',
+    'elec-1':'臨時用電設備應有漏電斷路器保護，每日開工前須確認接地線完整、插頭及電線無破損。',
+    'elec-2':'潮濕場所或雨天作業時，嚴禁使用非防水等級電動工具，並應穿戴絕緣手套。',
+    'elec-3':'高壓電線下方 5 公尺範圍內嚴禁機具進入，如有疑慮應先通報停電。',
+    'elec-4':'任何電氣故障或異常火花，應立即切斷電源並通報電氣負責人，嚴禁私自修復。',
+    'obj-1':'進入施工區域一律配戴安全帽，帽帶確實扣緊；高空作業區正下方禁止人員駐足。',
+    'obj-2':'工具、材料置放於高處時，應有防滾落措施（角鐵擋條或安全網），禁止工具懸掛於護欄外。',
+    'obj-3':'吊裝作業進行中，非必要人員嚴禁進入吊掛物正下方，吊運路線應設管制區。',
+    'col-1':'開挖深度超過 1.5 公尺之基坑，作業前應確認擋土支撐設置妥當，禁止土堆置坑緣 1 公尺內。',
+    'col-2':'模板組立或拆除時，應注意支撐點分配，嚴禁未完成支撐前拆除任何關鍵構件。',
+    'col-3':'鋼構或預鑄版吊放定位後，未完成永久固定前禁止解除吊鉤。',
+    'fire-1':'動火作業前須申請動火許可證，確認周邊 5 公尺內可燃物已清除或遮蔽，並備妥滅火器。',
+    'fire-2':'乙炔、氧氣等高壓鋼瓶應直立固定、遠離熱源，使用後確實關閉瓶閥並戴上保護帽。',
+    'fire-3':'密閉空間或通風不良區域進行動火前，應先進行可燃氣體偵測，確認安全後始得作業。',
+    'mach-1':'起重機具操作人員須持有效證照，作業前應確認鋼索、吊鉤、限制開關等安全裝置正常。',
+    'mach-2':'旋轉機械（鑽孔機、切割機等）作業時，嚴禁穿著寬鬆衣物，長髮應束起並配戴護目鏡。',
+    'mach-3':'機具維修或清潔前，應先確認電源切斷，並上鎖掛牌（LOTO）後方可進行。',
+    'chem-1':'接觸化學品前，應先查閱安全資料表（SDS），確認所需個人防護具（手套、護目鏡、口罩等）。',
+    'chem-2':'化學品容器應保持原標籤完整，嚴禁將化學品移裝至飲料容器，用後確實密封存放。',
+    'chem-3':'噴塗或溶劑作業區須保持通風，必要時配戴防毒口罩（OV 濾毒罐），禁止於密閉空間使用。',
+    'gen-1':'進入施工區域應配戴安全帽、安全鞋（鋼頭）及反光背心，個人防護具不得以任何理由省略。',
+    'gen-2':'嚴禁酒後進場作業；身體不適、服藥後影響判斷力者，應主動告知領班並暫緩作業。',
+    'gen-3':'緊急應變：發生事故立即呼救，撥打 119 急救並通報工地主任；疏散路線依現場標示。',
+    'gen-4':'二次工具箱會議由各工種領班主持，請於本表簽名後，依工種分組參加專業危害加強說明。',
+    'sig-head':'閱讀確認暨簽名欄',
+    'sig-desc':'本人已詳閱上述所有危害告知事項，了解作業風險並承諾遵守相關安全規定。',
+    'field-name':'姓名','field-co':'廠商／班別','field-type':'工種',
+    'ph-name':'請輸入姓名','ph-co':'廠商名稱','ph-type':'例：鋼筋工',
+    'sig-hint':'請在此處手寫簽名',
+    'btn-clear':'清除重簽','btn-voice':'語音說明','btn-confirm':'確認完成告知',
+    'sig-note':'※ 請填寫姓名並完成手寫簽名，再按「確認完成告知」',
+    'done-title':'告知確認完成！',
+    'done-suffix':'已完成每日進場危害因素告知確認',
+    'done-time':'確認時間：',
+    sigGuide:'請在下方填寫您的姓名、廠商及工種，然後在簽名板上手寫您的簽名，完成後點擊確認完成告知按鈕，即完成今日的危害告知確認。',
+    doneSpeak:'確認完成！您已完成今日的危害告知確認，請遵守安全規定，祝您今日作業平安順利！',
+    dayNames:['日','一','二','三','四','五','六'],dayPrefix:'星期',
+    speak:{ 1:'高處墜落危害告知。距地面兩公尺以上之高處作業，應確認護欄安全網或安全帶設置完備。開口部均應有防墜覆蓋或圍欄。鷹架及施工架上作業時，確認腳踏板固定確實，嚴禁在未固定踏板上站立。梯子使用前應確認固定及梯腳防滑。', 2:'電氣感電危害告知。臨時用電設備應有漏電斷路器保護，每日開工前確認接地線完整。潮濕場所嚴禁使用非防水等級電動工具。高壓電線下方五公尺嚴禁機具進入。發現電氣故障應立即切斷電源。', 3:'物體飛落危害告知。進入施工區域一律配戴安全帽，帽帶確實扣緊。工具材料應有防滾落措施。吊裝作業進行中，非必要人員嚴禁進入吊掛物正下方。', 4:'倒塌崩塌危害告知。開挖深度超過一點五公尺之基坑，作業前確認擋土支撐設置妥當。模板組立或拆除時，注意支撐點分配。鋼構吊放定位後，未完成永久固定前禁止解除吊鉤。', 5:'火災爆炸危害告知。動火作業前須申請動火許可證，確認周邊可燃物已清除。高壓鋼瓶應直立固定遠離熱源。密閉空間動火前應先進行可燃氣體偵測。', 6:'機械設備危害告知。起重機具操作人員須持有效證照，作業前確認安全裝置正常。旋轉機械作業時嚴禁穿著寬鬆衣物，長髮應束起並配戴護目鏡。機具維修前應先切斷電源並上鎖掛牌。', 7:'化學品有害物質危害告知。接觸化學品前應先查閱安全資料表。嚴禁將化學品移裝至飲料容器。噴塗或溶劑作業區須保持通風，必要時配戴防毒口罩。', 8:'工地安全一般規定。進入施工區域應配戴安全帽、安全鞋及反光背心。嚴禁酒後進場作業。發生事故立即呼救，撥打一一九急救並通報工地主任。請於本表簽名後，依工種分組參加二次工具箱會議。' }
+  },
+
+  en:{
+    code:'en-US', aiName:'Safety Sister', aiRole:'Safety Guide',
+    bannerTitle:'Daily Hazard Notification System', statusTxt:'System Online',
+    speakLabel:'Play Voice Guide', voiceBtn:'Voice',
+    metaProj:'Project Name', metaDate:'Work Date', metaDay:"Today's Weather",
+    progTitle:'📋 Reading Progress',
+    guideWelcome:"Good morning! Welcome to the site. Please read all hazard notifications carefully. After reading, sign below to confirm you understand today's work risks. Let's build a safe workplace together! 💪",
+    guideReading:"Great start! You've begun reading the hazard notices. Click each card to expand details, or press 🔊 Voice to hear me read it aloud.",
+    guideMid:"Good progress! Please continue reading the remaining hazard notices — every one matters!",
+    guideAlmost:"Almost done! Please finish the last few hazard notices to ensure you understand all safety rules.",
+    guideDone:"All hazard notices read! Please fill in your details below and sign in the signature box. ✍️",
+    toastStart:"Tap each card to expand details, or press 🔊 Voice to hear Safety Sister explain!",
+    toastDone:"Excellent! All hazard notices have been read. Please fill in your info and sign below.",
+    cat1:'Fall Hazard',cat2:'Electrical Hazard',cat3:'Falling Objects',cat4:'Collapse Hazard',
+    cat5:'Fire & Explosion',cat6:'Machinery',cat7:'Chemical Hazard',cat8:'General Rules',
+    title1:'Fall from Height',title2:'Electrical Shock Hazard',title3:'Falling / Flying Objects',title4:'Collapse / Cave-in Hazard',
+    title5:'Fire & Explosion Hazard',title6:'Machinery & Equipment',title7:'Chemical & Hazardous Substances',title8:'General Site Safety Rules',
+    sub1:'高處墜落',sub2:'電氣感電',sub3:'物體飛落',sub4:'倒塌崩塌',
+    sub5:'火災爆炸',sub6:'機械設備',sub7:'化學危害',sub8:'一般安全',
+    'fall-1':'For work at 2m or more above ground, confirm guardrails, safety nets, or safety harnesses are fully installed before starting.',
+    'fall-2':'All openings (floor openings, light shafts, elevator shafts) must have fall protection covers or barriers; confirm they are secure before work.',
+    'fall-3':'On scaffolding, confirm planks are fully laid and secured. Never stand on unsecured planks.',
+    'fall-4':'Before using a ladder, confirm it is fixed and the feet are anti-slip. Do not overreach or climb while carrying items.',
+    'elec-1':'Temporary power equipment must have GFCI protection. Before work each day, confirm grounding wires are intact and cables/plugs are undamaged.',
+    'elec-2':'In wet areas or rainy conditions, do not use non-waterproof power tools. Wear insulated gloves.',
+    'elec-3':'No machinery within 5m of high-voltage lines. If in doubt, report and request power shutdown first.',
+    'elec-4':'Any electrical fault or sparks: cut power immediately and report to the electrical supervisor. Do not attempt self-repair.',
+    'obj-1':'Everyone entering the site must wear a hard hat with chin strap fastened. No standing directly below overhead work areas.',
+    'obj-2':'Tools and materials stored at height must have anti-roll measures (bars or nets). Never hang tools on guardrails.',
+    'obj-3':'During lifting operations, non-essential personnel must not enter the area below suspended loads. Establish exclusion zones along lift routes.',
+    'col-1':'For excavations deeper than 1.5m, confirm shoring is properly installed. No soil spoil within 1m of the excavation edge.',
+    'col-2':'During formwork erection/removal, monitor load points carefully. Never remove critical members before shoring is complete.',
+    'col-3':'After steel or precast panels are positioned, do not release the crane hook until permanent fixings are complete.',
+    'fire-1':'Hot work requires a permit. Confirm all combustibles within 5m are removed or protected, and a fire extinguisher is ready.',
+    'fire-2':'Acetylene and oxygen cylinders must stand upright, be secured, and kept away from heat. Close valves and fit caps after use.',
+    'fire-3':'In confined or poorly ventilated spaces, test for flammable gases before any hot work. Only proceed if safe.',
+    'mach-1':'Crane operators must hold valid licenses. Before use, verify slings, hooks, and limit switches are all in working order.',
+    'mach-2':'When using rotating machinery (drills, saws), no loose clothing. Tie back long hair and wear safety glasses.',
+    'mach-3':'Before any repair or cleaning of equipment, switch off power and apply lockout/tagout (LOTO).',
+    'chem-1':'Before handling chemicals, read the Safety Data Sheet (SDS) and confirm correct PPE (gloves, goggles, mask).',
+    'chem-2':'Keep original labels on containers. Never transfer chemicals into drink containers. Seal tightly after use.',
+    'chem-3':'Maintain ventilation in spray or solvent areas. Use OV cartridge respirator if needed. Never work with solvents in confined spaces.',
+    'gen-1':'All persons on site must wear hard hat, steel-toed boots, and high-visibility vest at all times — no exceptions.',
+    'gen-2':'No alcohol before work. If unwell or under medication that affects judgment, inform your supervisor and stand down.',
+    'gen-3':'Emergency: call for help immediately, dial emergency services, and notify the site manager. Follow posted evacuation routes.',
+    'gen-4':'Secondary toolbox meetings are led by trade supervisors. After signing this form, join your trade group for specialist hazard briefing.',
+    'sig-head':'Acknowledgement & Signature',
+    'sig-desc':'I confirm that I have read all hazard notices above, understand the work risks, and commit to following all safety rules.',
+    'field-name':'Full Name','field-co':'Company / Crew','field-type':'Trade',
+    'ph-name':'Enter your name','ph-co':'Company name','ph-type':'e.g. Rebar Worker',
+    'sig-hint':'Sign here',
+    'btn-clear':'Clear & Re-sign','btn-voice':'Voice Guide','btn-confirm':'Confirm & Submit',
+    'sig-note':'※ Please fill in your name, sign, then click "Confirm & Submit"',
+    'done-title':'Notification Confirmed!',
+    'done-suffix':'has completed the daily hazard notification.',
+    'done-time':'Confirmed at: ',
+    sigGuide:'Please fill in your name, company and trade below, then hand-sign in the signature box. When done, press Confirm and Submit to complete today\'s hazard acknowledgement.',
+    doneSpeak:'Confirmed! You have completed today\'s hazard notification. Please follow all safety rules. Have a safe workday!',
+    dayNames:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],dayPrefix:'',
+    speak:{ 1:'Fall from height hazard. For work at 2 metres or more above ground, confirm guardrails, safety nets, or safety harnesses are in place. All openings must have fall protection. On scaffolding, confirm planks are secured. Confirm ladders are fixed and non-slip before use.', 2:'Electrical shock hazard. Temporary power must have GFCI protection. In wet conditions do not use non-waterproof tools. Keep clear 5 metres from high voltage lines. Report any faults and cut power immediately.', 3:'Falling objects hazard. Wear hard hat at all times with chin strap fastened. Provide anti-roll measures for tools at height. No personnel under suspended loads during lifting.', 4:'Collapse hazard. Confirm shoring for excavations deeper than 1.5 metres. Monitor load points during formwork. Do not release crane hook until permanent fixings are complete.', 5:'Fire and explosion hazard. Obtain hot work permit before starting. Remove combustibles within 5 metres. Cylinders must stand upright. Test for flammable gases in confined spaces.', 6:'Machinery hazard. Crane operators must hold valid licences. Wear no loose clothing around rotating equipment. Apply lockout tagout before any maintenance.', 7:'Chemical hazard. Read Safety Data Sheet before handling chemicals. Never transfer chemicals into drink containers. Ensure ventilation when using solvents.', 8:'General site safety. Wear hard hat, steel boots, and hi-vis vest at all times. No alcohol. Call emergency services in an incident. Attend secondary toolbox meeting after signing.' }
+  },
+
+  th:{
+    code:'th-TH', aiName:'น้องวิศวะ', aiRole:'เจ้าหน้าที่ความปลอดภัย',
+    bannerTitle:'ระบบแจ้งเตือนอันตรายประจำวัน', statusTxt:'ระบบทำงานปกติ',
+    speakLabel:'เล่นเสียงคำแนะนำ', voiceBtn:'เสียง',
+    metaProj:'ชื่อโครงการ', metaDate:'วันที่ทำงาน', metaDay:'สภาพอากาศ',
+    progTitle:'📋 ความคืบหน้าการอ่าน',
+    guideWelcome:'สวัสดีตอนเช้า! ยินดีต้อนรับเข้าสู่พื้นที่ก่อสร้าง กรุณาอ่านรายการแจ้งเตือนอันตรายทั้งหมดอย่างละเอียด หลังจากอ่านเสร็จแล้ว โปรดลงชื่อด้านล่างเพื่อยืนยัน มาสร้างสถานที่ทำงานที่ปลอดภัยร่วมกัน! 💪',
+    guideReading:'เยี่ยมมาก! คุณเริ่มอ่านประกาศอันตรายแล้ว คลิกที่การ์ดแต่ละใบเพื่อดูรายละเอียด หรือกด 🔊 เสียง เพื่อฟังคำอธิบาย',
+    guideMid:'ความคืบหน้าดีมาก! โปรดอ่านรายการที่เหลือต่อ ทุกรายการมีความสำคัญ!',
+    guideAlmost:'ใกล้เสร็จแล้ว! โปรดอ่านรายการสุดท้ายเพื่อให้เข้าใจกฎความปลอดภัยทั้งหมด',
+    guideDone:'อ่านประกาศอันตรายครบทุกรายการแล้ว! กรุณากรอกข้อมูลด้านล่างและเซ็นชื่อในช่องลายเซ็น ✍️',
+    toastStart:'แตะที่การ์ดแต่ละใบเพื่อขยายรายละเอียด หรือกด 🔊 เสียง เพื่อฟังน้องวิศวะอธิบาย!',
+    toastDone:'ยอดเยี่ยม! อ่านครบทุกรายการแล้ว กรุณากรอกข้อมูลและลงชื่อด้านล่าง',
+    cat1:'อันตรายจากการตก',cat2:'อันตรายจากไฟฟ้า',cat3:'วัตถุตกหล่น',cat4:'การพังทลาย',
+    cat5:'ไฟไหม้/ระเบิด',cat6:'เครื่องจักร',cat7:'สารเคมี',cat8:'กฎทั่วไป',
+    title1:'อันตรายจากการตกจากที่สูง',title2:'อันตรายจากไฟฟ้าช็อต',title3:'อันตรายจากวัตถุตกหล่น',title4:'อันตรายจากการพังทลาย',
+    title5:'อันตรายจากไฟไหม้/ระเบิด',title6:'อันตรายจากเครื่องจักร',title7:'อันตรายจากสารเคมี',title8:'กฎความปลอดภัยทั่วไป',
+    sub1:'Fall from Height',sub2:'Electrical Shock',sub3:'Falling Objects',sub4:'Collapse',
+    sub5:'Fire & Explosion',sub6:'Machinery',sub7:'Chemical Hazard',sub8:'General Safety',
+    'fall-1':'การทำงานในที่สูงตั้งแต่ 2 เมตรขึ้นไป ต้องมีการติดตั้งราวกั้น ตาข่ายนิรภัย หรือเข็มขัดนิรภัยให้ครบถ้วนก่อนเริ่มงาน',
+    'fall-2':'ช่องเปิดทุกแห่ง (ช่องพื้น ช่องลิฟต์ ฯลฯ) ต้องมีฝาครอบกันตกหรือรั้วกั้น และตรวจสอบความมั่นคงก่อนทำงาน',
+    'fall-3':'บนนั่งร้าน ต้องตรวจสอบให้แน่ใจว่าแผ่นพื้นปูครบและยึดแน่น ห้ามยืนบนแผ่นที่ไม่ได้ยึด',
+    'fall-4':'ก่อนใช้บันได ต้องตรวจสอบว่ายึดแน่นและขาบันไดมียางกันลื่น ห้ามปีนเกินความสูงที่กำหนดหรือปีนขณะถือของ',
+    'elec-1':'อุปกรณ์ไฟฟ้าชั่วคราวต้องมี GFCI ก่อนเริ่มงานทุกวัน ตรวจสอบสายดิน ปลั๊ก และสายไฟว่าไม่ชำรุด',
+    'elec-2':'ในพื้นที่เปียกหรือช่วงฝนตก ห้ามใช้เครื่องมือไฟฟ้าที่ไม่กันน้ำ และต้องสวมถุงมือฉนวน',
+    'elec-3':'ห้ามนำเครื่องจักรเข้าในรัศมี 5 เมตรจากสายไฟแรงสูง หากสงสัยให้แจ้งตัดไฟก่อน',
+    'elec-4':'หากพบความผิดปกติของไฟฟ้า ให้ตัดไฟทันทีและแจ้งผู้รับผิดชอบ ห้ามซ่อมเองโดยเด็ดขาด',
+    'obj-1':'ทุกคนในพื้นที่ก่อสร้างต้องสวมหมวกนิรภัยและรัดสายรัดคางให้แน่น ห้ามยืนใต้พื้นที่ทำงานสูง',
+    'obj-2':'เครื่องมือและวัสดุที่วางในที่สูงต้องมีอุปกรณ์กันหล่น ห้ามแขวนเครื่องมือไว้ที่ราวกั้น',
+    'obj-3':'ระหว่างการยกของ ห้ามผู้ที่ไม่เกี่ยวข้องเข้าใต้บริเวณของที่ถูกยก และต้องกำหนดเขตควบคุม',
+    'col-1':'สำหรับบ่อขุดลึกกว่า 1.5 เมตร ต้องตรวจสอบค้ำยันดินก่อนทำงาน ห้ามกองดินภายใน 1 เมตรจากขอบบ่อ',
+    'col-2':'ระหว่างติดตั้งหรือถอดแบบ ต้องระวังจุดรับน้ำหนัก ห้ามถอดชิ้นส่วนสำคัญก่อนค้ำยันแล้วเสร็จ',
+    'col-3':'หลังจากวางโครงสร้างเหล็กหรือชิ้นส่วนสำเร็จรูปแล้ว ห้ามปล่อยตะขอเครนจนกว่าการยึดถาวรจะเสร็จสมบูรณ์',
+    'fire-1':'งานที่มีเปลวไฟต้องขอใบอนุญาต ต้องนำวัสดุไวไฟออกจากรัศมี 5 เมตร และเตรียมถังดับเพลิงไว้',
+    'fire-2':'ถังแก๊สอะเซทิลีนและออกซิเจนต้องตั้งตรงและยึดให้แน่น ห่างจากแหล่งความร้อน ปิดวาล์วหลังใช้และใส่ฝาครอบ',
+    'fire-3':'ในพื้นที่อับอากาศ ต้องตรวจวัดแก๊สไวไฟก่อนทำงานที่มีเปลวไฟ และต้องแน่ใจว่าปลอดภัยก่อน',
+    'mach-1':'ผู้ใช้เครนต้องมีใบอนุญาต ตรวจสอบสลิง ตะขอ และสวิตช์จำกัดก่อนใช้งาน',
+    'mach-2':'ระหว่างใช้เครื่องจักรหมุน ห้ามสวมเสื้อผ้าหลวม มัดผมให้เรียบร้อย และสวมแว่นตานิรภัย',
+    'mach-3':'ก่อนซ่อมหรือทำความสะอาดเครื่องจักร ต้องตัดไฟและล็อคแท็ก (LOTO)',
+    'chem-1':'ก่อนสัมผัสสารเคมี ต้องอ่านข้อมูลความปลอดภัย (SDS) และสวมอุปกรณ์ป้องกัน (ถุงมือ แว่นตา หน้ากาก)',
+    'chem-2':'รักษาฉลากบนภาชนะให้ครบถ้วน ห้ามถ่ายสารเคมีใส่ขวดน้ำดื่ม ปิดฝาให้แน่นหลังใช้',
+    'chem-3':'ในพื้นที่พ่นสีหรือใช้ตัวทำละลาย ต้องระบายอากาศให้ดี สวมหน้ากากกรองไอระเหยหากจำเป็น ห้ามใช้ในพื้นที่อับอากาศ',
+    'gen-1':'ทุกคนในพื้นที่ก่อสร้างต้องสวมหมวกนิรภัย รองเท้าหัวเหล็ก และเสื้อสะท้อนแสง ไม่มีข้อยกเว้น',
+    'gen-2':'ห้ามเข้าทำงานหลังดื่มแอลกอฮอล์ หากป่วยหรือกินยาที่ส่งผลต่อสติสัมปชัญญะ ให้แจ้งหัวหน้าและหยุดพัก',
+    'gen-3':'ฉุกเฉิน: ขอความช่วยเหลือทันที โทรหน่วยกู้ภัยและแจ้งผู้จัดการไซต์ ปฏิบัติตามเส้นทางอพยพที่แสดงไว้',
+    'gen-4':'การประชุม Toolbox ครั้งที่สอง นำโดยหัวหน้าทีม หลังลงชื่อในแบบฟอร์มนี้ให้เข้าร่วมกลุ่มตามประเภทงาน',
+    'sig-head':'การยืนยันการอ่านและลายเซ็น',
+    'sig-desc':'ข้าพเจ้าได้อ่านประกาศอันตรายทั้งหมดข้างต้นแล้ว เข้าใจความเสี่ยงในการทำงาน และรับรองว่าจะปฏิบัติตามกฎความปลอดภัย',
+    'field-name':'ชื่อ-นามสกุล','field-co':'บริษัท/ทีม','field-type':'ประเภทงาน',
+    'ph-name':'กรุณากรอกชื่อ','ph-co':'ชื่อบริษัท','ph-type':'เช่น ช่างเหล็ก',
+    'sig-hint':'เซ็นชื่อที่นี่',
+    'btn-clear':'ล้างและเซ็นใหม่','btn-voice':'คำแนะนำเสียง','btn-confirm':'ยืนยันการรับทราบ',
+    'sig-note':'※ กรุณากรอกชื่อและเซ็นชื่อ แล้วกด "ยืนยันการรับทราบ"',
+    'done-title':'ยืนยันการรับทราบเรียบร้อย!',
+    'done-suffix':'ได้ยืนยันการรับทราบประกาศอันตรายประจำวันแล้ว',
+    'done-time':'เวลายืนยัน: ',
+    sigGuide:'กรุณากรอกชื่อ บริษัท และประเภทงานด้านล่าง จากนั้นเซ็นชื่อในช่องลายเซ็น เมื่อเสร็จแล้วกดปุ่มยืนยันการรับทราบ',
+    doneSpeak:'ยืนยันเรียบร้อย! คุณได้ยืนยันการรับทราบอันตรายประจำวันแล้ว ขอให้ทำงานอย่างปลอดภัย!',
+    dayNames:['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'],dayPrefix:'วัน',
+    speak:{ 1:'อันตรายจากการตกจากที่สูง สำหรับงานที่สูงตั้งแต่สองเมตร ต้องมีราวกั้น ตาข่ายนิรภัย หรือเข็มขัดนิรภัย ช่องเปิดทุกแห่งต้องมีฝาครอบ บนนั่งร้านต้องตรวจสอบแผ่นพื้นให้แน่น และบันไดต้องยึดแน่นและกันลื่น', 2:'อันตรายจากไฟฟ้า ต้องมี GFCI สำหรับไฟฟ้าชั่วคราว ห้ามใช้เครื่องมือไม่กันน้ำในพื้นที่เปียก ห้ามเข้าใกล้สายไฟแรงสูง และแจ้งความผิดปกติทันที', 3:'อันตรายจากวัตถุตกหล่น สวมหมวกนิรภัยตลอดเวลา มีอุปกรณ์กันหล่นสำหรับของในที่สูง และห้ามยืนใต้บริเวณที่มีการยกของ', 4:'อันตรายจากการพังทลาย ตรวจสอบค้ำยันสำหรับบ่อขุดลึก ระวังจุดรับน้ำหนักระหว่างงานแบบ และห้ามปล่อยตะขอเครนก่อนยึดถาวร', 5:'อันตรายจากไฟไหม้และระเบิด ต้องมีใบอนุญาตก่อนงานไฟ นำวัสดุไวไฟออกห่าง ถังแก๊สต้องตั้งตรง และตรวจแก๊สในพื้นที่อับอากาศ', 6:'อันตรายจากเครื่องจักร ผู้ใช้เครนต้องมีใบอนุญาต ห้ามสวมเสื้อหลวมใกล้เครื่องจักรหมุน และล็อคแท็กก่อนซ่อม', 7:'อันตรายจากสารเคมี อ่าน SDS ก่อนใช้สารเคมี ห้ามถ่ายใส่ขวดน้ำ และต้องระบายอากาศในพื้นที่ใช้ตัวทำละลาย', 8:'กฎความปลอดภัยทั่วไป ต้องสวมหมวก รองเท้าหัวเหล็ก และเสื้อสะท้อนแสง ห้ามดื่มแอลกอฮอล์ก่อนทำงาน โทรฉุกเฉินหากเกิดอุบัติเหตุ และเข้าร่วม Toolbox หลังเซ็นชื่อ' }
+  },
+
+  id:{
+    code:'id-ID', aiName:'Adik Insinyur', aiRole:'Petugas Keselamatan',
+    bannerTitle:'Sistem Notifikasi Bahaya Harian', statusTxt:'Sistem Berjalan',
+    speakLabel:'Putar Panduan Suara', voiceBtn:'Suara',
+    metaProj:'Nama Proyek', metaDate:'Tanggal Kerja', metaDay:'Cuaca Hari Ini',
+    progTitle:'📋 Kemajuan Membaca',
+    guideWelcome:'Selamat pagi! Selamat datang di lokasi. Mohon baca semua pemberitahuan bahaya dengan seksama. Setelah selesai membaca, tanda tangani di bawah untuk mengkonfirmasi. Mari kita ciptakan lingkungan kerja yang aman bersama! 💪',
+    guideReading:'Bagus! Anda sudah mulai membaca pemberitahuan bahaya. Klik setiap kartu untuk detail, atau tekan 🔊 Suara untuk mendengarkan penjelasan.',
+    guideMid:'Kemajuan bagus! Lanjutkan membaca item yang tersisa — semuanya penting!',
+    guideAlmost:'Hampir selesai! Baca beberapa item terakhir untuk memastikan Anda memahami semua peraturan keselamatan.',
+    guideDone:'Semua pemberitahuan bahaya sudah dibaca! Silakan isi data di bawah dan tanda tangan di kotak tanda tangan. ✍️',
+    toastStart:'Ketuk setiap kartu untuk detail, atau tekan 🔊 Suara untuk mendengar Adik Insinyur menjelaskan!',
+    toastDone:'Luar biasa! Semua pemberitahuan sudah dibaca. Silakan isi info dan tanda tangan di bawah.',
+    cat1:'Bahaya Jatuh',cat2:'Bahaya Listrik',cat3:'Benda Jatuh',cat4:'Bahaya Longsor',
+    cat5:'Kebakaran/Ledakan',cat6:'Mesin & Alat',cat7:'Bahan Kimia',cat8:'Peraturan Umum',
+    title1:'Bahaya Jatuh dari Ketinggian',title2:'Bahaya Sengatan Listrik',title3:'Bahaya Benda Jatuh / Terbang',title4:'Bahaya Longsor / Runtuh',
+    title5:'Bahaya Kebakaran & Ledakan',title6:'Mesin & Peralatan',title7:'Bahan Kimia & Berbahaya',title8:'Peraturan Keselamatan Umum',
+    sub1:'Fall from Height',sub2:'Electrical Shock',sub3:'Falling Objects',sub4:'Collapse',
+    sub5:'Fire & Explosion',sub6:'Machinery',sub7:'Chemical Hazard',sub8:'General Safety',
+    'fall-1':'Untuk pekerjaan di ketinggian 2 meter atau lebih, pastikan pagar pengaman, jaring keselamatan, atau harness terpasang sebelum mulai bekerja.',
+    'fall-2':'Semua lubang (lantai, shaft lift, dll.) harus ditutup atau dipagari. Periksa kestabilannya sebelum bekerja.',
+    'fall-3':'Di scaffolding, pastikan papan pijakan terpasang rata dan terkunci. Jangan berdiri di papan yang tidak terkunci.',
+    'fall-4':'Sebelum menggunakan tangga, pastikan terkunci dan kaki tangga tidak licin. Jangan memanjat terlalu tinggi atau sambil membawa barang.',
+    'elec-1':'Peralatan listrik sementara harus dilengkapi GFCI. Setiap hari periksa kabel ground, steker, dan kabel tidak rusak.',
+    'elec-2':'Di area basah atau hujan, jangan gunakan alat listrik yang tidak tahan air. Gunakan sarung tangan isolasi.',
+    'elec-3':'Jangan masukkan alat berat dalam radius 5 meter dari kabel tegangan tinggi. Jika ragu, laporkan dan minta pemadaman listrik.',
+    'elec-4':'Jika ada gangguan listrik atau percikan, segera matikan listrik dan laporkan kepada petugas. Jangan coba memperbaiki sendiri.',
+    'obj-1':'Semua orang di lokasi wajib memakai helm dengan tali pengaman. Dilarang berdiri di bawah area kerja di atas.',
+    'obj-2':'Alat dan material di ketinggian harus dilengkapi pengaman anti-gelinding. Jangan gantungkan alat di pagar.',
+    'obj-3':'Saat operasi pengangkatan, personil yang tidak perlu dilarang masuk di bawah beban yang digantung. Buat zona eksklusif.',
+    'col-1':'Untuk galian lebih dari 1,5 meter, pastikan turap terpasang sebelum bekerja. Jangan tumpuk tanah dalam 1 meter dari tepi galian.',
+    'col-2':'Saat memasang atau membongkar bekisting, perhatikan titik tumpuan. Jangan lepas elemen kritis sebelum penyangga selesai.',
+    'col-3':'Setelah baja atau panel pracetak dipasang, jangan lepas hook crane sampai pengikatan permanen selesai.',
+    'fire-1':'Pekerjaan panas memerlukan izin. Pastikan material mudah terbakar dibersihkan dalam radius 5 meter, dan APAR tersedia.',
+    'fire-2':'Tabung asetilena dan oksigen harus berdiri tegak dan diikat, jauh dari panas. Tutup katup dan pasang penutup setelah digunakan.',
+    'fire-3':'Di ruang terbatas atau kurang ventilasi, uji gas mudah terbakar sebelum pekerjaan panas. Lanjutkan hanya jika aman.',
+    'mach-1':'Operator crane wajib memiliki lisensi yang valid. Sebelum digunakan, periksa sling, hook, dan limit switch.',
+    'mach-2':'Saat menggunakan mesin berputar, jangan kenakan pakaian longgar. Ikat rambut panjang dan gunakan kacamata keselamatan.',
+    'mach-3':'Sebelum perbaikan atau pembersihan alat, matikan listrik dan pasang lockout/tagout (LOTO).',
+    'chem-1':'Sebelum menangani bahan kimia, baca Lembar Data Keselamatan (SDS) dan konfirmasi APD yang diperlukan (sarung tangan, goggle, masker).',
+    'chem-2':'Jaga label asli pada wadah. Jangan pindahkan bahan kimia ke wadah minuman. Tutup rapat setelah digunakan.',
+    'chem-3':'Pastikan ventilasi di area semprot atau pelarut. Gunakan respirator karbon aktif jika perlu. Jangan bekerja dengan pelarut di ruang tertutup.',
+    'gen-1':'Semua orang di lokasi wajib memakai helm, sepatu baja, dan rompi reflektif — tanpa pengecualian.',
+    'gen-2':'Dilarang bekerja setelah minum alkohol. Jika sakit atau minum obat yang mempengaruhi konsentrasi, lapor ke mandor dan istirahat.',
+    'gen-3':'Darurat: segera minta bantuan, hubungi layanan darurat, dan beritahu manajer lokasi. Ikuti jalur evakuasi yang tertera.',
+    'gen-4':'Rapat toolbox kedua dipimpin oleh mandor per jenis pekerjaan. Setelah menandatangani formulir ini, ikuti kelompok Anda untuk briefing bahaya khusus.',
+    'sig-head':'Konfirmasi Pembacaan & Tanda Tangan',
+    'sig-desc':'Saya menyatakan telah membaca semua pemberitahuan bahaya di atas, memahami risiko kerja, dan berkomitmen mematuhi semua peraturan keselamatan.',
+    'field-name':'Nama Lengkap','field-co':'Perusahaan/Tim','field-type':'Jenis Pekerjaan',
+    'ph-name':'Masukkan nama Anda','ph-co':'Nama perusahaan','ph-type':'mis. Tukang Besi',
+    'sig-hint':'Tanda tangan di sini',
+    'btn-clear':'Hapus & Tanda Tangan Ulang','btn-voice':'Panduan Suara','btn-confirm':'Konfirmasi & Kirim',
+    'sig-note':'※ Isi nama dan tanda tangan, lalu klik "Konfirmasi & Kirim"',
+    'done-title':'Konfirmasi Selesai!',
+    'done-suffix':'telah menyelesaikan konfirmasi pemberitahuan bahaya harian.',
+    'done-time':'Waktu konfirmasi: ',
+    sigGuide:'Silakan isi nama, perusahaan, dan jenis pekerjaan di bawah, kemudian tanda tangani di kotak tanda tangan. Setelah selesai, tekan Konfirmasi dan Kirim untuk menyelesaikan konfirmasi bahaya hari ini.',
+    doneSpeak:'Dikonfirmasi! Anda telah menyelesaikan konfirmasi bahaya harian. Patuhi semua peraturan keselamatan. Semoga bekerja dengan aman!',
+    dayNames:['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],dayPrefix:'Hari ',
+    speak:{ 1:'Bahaya jatuh dari ketinggian. Untuk pekerjaan dua meter atau lebih, pastikan pagar, jaring, atau harness terpasang. Semua lubang harus ditutup. Di scaffolding pastikan papan terkunci. Periksa tangga sebelum digunakan.', 2:'Bahaya listrik. Peralatan listrik harus dilengkapi GFCI. Jangan gunakan alat tidak tahan air di area basah. Jangan masuk 5 meter dari kabel tegangan tinggi. Laporkan gangguan listrik segera.', 3:'Bahaya benda jatuh. Wajib memakai helm dengan tali pengaman. Pasang pengaman anti-gelinding untuk alat di ketinggian. Dilarang berdiri di bawah beban yang diangkat.', 4:'Bahaya longsor dan runtuh. Pastikan turap untuk galian dalam. Perhatikan titik tumpuan bekisting. Jangan lepas hook crane sebelum pengikatan permanen.', 5:'Bahaya kebakaran dan ledakan. Dapatkan izin pekerjaan panas. Bersihkan material mudah terbakar dalam 5 meter. Tabung harus berdiri tegak. Uji gas di ruang terbatas.', 6:'Bahaya mesin. Operator crane wajib berlisensi. Jangan kenakan pakaian longgar dekat mesin berputar. Pasang LOTO sebelum perawatan.', 7:'Bahaya kimia. Baca SDS sebelum menangani bahan kimia. Jangan pindahkan ke wadah minuman. Pastikan ventilasi saat menggunakan pelarut.', 8:'Peraturan umum. Wajib helm, sepatu baja, dan rompi reflektif. Dilarang alkohol. Hubungi darurat jika terjadi kecelakaan. Ikuti rapat toolbox setelah tanda tangan.' }
+  }
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let curLang = 'zh';
+const readSet = new Set();
+const openCards = new Set();
+
+// ── init date ──
+const now = new Date();
+function renderDate(l){
+  const d = LANG[l];
+  document.getElementById('today-date').textContent =
+    l==='zh' ? now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日'
+             : now.toLocaleDateString(d.code,{year:'numeric',month:'long',day:'numeric'});
+  const day = d.dayNames[now.getDay()];
+  document.getElementById('today-day').textContent = d.dayPrefix + day;
+}
+
+// ── progress steps ──
+const stepLabels = {zh:['墜落','感電','飛落','崩塌','火災','機械','化學','規定'],
+  en:['Fall','Elec','Obj','Col','Fire','Mach','Chem','Gen'],
+  th:['ตก','ไฟฟ้า','หล่น','พัง','ไฟ','จักร','เคมี','ทั่วไป'],
+  id:['Jatuh','Listrik','Benda','Runtuh','Api','Mesin','Kimia','Umum']};
+function buildSteps(){
+  const c = document.getElementById('progress-steps');
+  c.innerHTML='';
+  stepLabels[curLang].forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='step-dot'+(readSet.has(i+1)?' done':'');
+    d.id='step-'+(i+1); d.textContent=i+1;
+    d.title=stepLabels[curLang][i];
+    c.appendChild(d);
+  });
+}
+
+// ── apply language ──
+function switchLang(l){
+  curLang = l;
+  const t = LANG[l];
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  // banner
+  document.getElementById('banner-title').textContent = t.bannerTitle;
+  document.getElementById('status-txt').textContent = t.statusTxt;
+  document.getElementById('ai-name').textContent = t.aiName;
+  document.getElementById('ai-role').textContent = t.aiRole;
+  document.getElementById('speak-label').textContent = t.speakLabel;
+  document.getElementById('toast-name').textContent = t.aiName;
+  // meta labels
+  document.getElementById('meta-proj-label').textContent = t.metaProj;
+  document.getElementById('meta-date-label').textContent = t.metaDate;
+  document.getElementById('meta-day-label').textContent = t.metaDay;
+  document.getElementById('prog-title').textContent = t.progTitle;
+  // all data-key elements
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k = el.getAttribute('data-key');
+    if(t[k]!==undefined) el.textContent = t[k];
+  });
+  // placeholders
+  document.querySelectorAll('[data-key-ph]').forEach(el=>{
+    const k = el.getAttribute('data-key-ph');
+    if(t[k]!==undefined) el.placeholder = t[k];
+  });
+  // progress count
+  updateProgress();
+  buildSteps();
+  renderDate(l);
+  updateGuideText();
+  // html lang
+  document.documentElement.lang = t.code.split('-')[0];
+}
+
+// ── toggle card ──
+function toggleCard(n){
+  const body = document.getElementById('body-'+n);
+  const chev = document.getElementById('chev-'+n);
+  const header = body.previousElementSibling;
+  const card = body.parentElement;
+  const isOpen = openCards.has(n);
+  if(isOpen){
+    body.style.display='none';
+    chev.classList.remove('open');
+    header.classList.remove('open');
+    card.classList.remove('active');
+    openCards.delete(n);
+  } else {
+    body.style.display='block';
+    chev.classList.add('open');
+    header.classList.add('open');
+    card.classList.add('active');
+    openCards.add(n);
+    markRead(n);
+  }
+}
+
+// ── mark read ──
+function markRead(n){
+  if(readSet.has(n)) return;
+  readSet.add(n);
+  document.getElementById('chk-'+n).textContent='✓';
+  document.getElementById('chk-'+n).classList.add('done');
+  const st = document.getElementById('step-'+n);
+  if(st) st.classList.add('done');
+  document.querySelector('[data-sec="'+n+'"]').classList.add('read-done');
+  updateProgress();
+  updateGuideText();
+  if(readSet.size===8) showTip(LANG[curLang].toastDone);
+}
+function updateProgress(){
+  const t = LANG[curLang];
+  const n = readSet.size;
+  const pct = Math.round(n/8*100);
+  document.getElementById('read-bar').style.width=pct+'%';
+  document.getElementById('read-count').textContent = n+' / 8';
+}
+
+// ── guide text ──
+function updateGuideText(){
+  const t = LANG[curLang];
+  const n = readSet.size;
+  let msg = n===0?t.guideWelcome:n<=2?t.guideReading:n<=5?t.guideMid:n<=7?t.guideAlmost:t.guideDone;
+  document.getElementById('guide-text').textContent = msg;
+}
+
+// ── TTS ──
+function speakText(text, langCode, btn){
+  if(!window.speechSynthesis){ showTip('此瀏覽器不支援語音，建議使用 Chrome 或 Safari。'); return; }
+  window.speechSynthesis.cancel();
+  if(btn && btn.classList.contains('playing')){ btn.classList.remove('playing'); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = langCode; u.rate = 0.88; u.pitch = 1.05;
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v=>v.lang.startsWith(langCode.split('-')[0]));
+  if(v) u.voice = v;
+  if(btn){ btn.classList.add('playing'); u.onend=()=>btn.classList.remove('playing'); }
+  window.speechSynthesis.speak(u);
+}
+function speakGuide(btn){
+  const t=LANG[curLang];
+  speakText(document.getElementById('guide-text').textContent, t.code, btn);
+}
+function speakCard(e, n){
+  e.stopPropagation();
+  const t=LANG[curLang];
+  speakText(t.speak[n], t.code, e.currentTarget);
+  if(!openCards.has(n)) toggleCard(n);
+}
+function speakSigGuide(){
+  const t=LANG[curLang];
+  speakText(t.sigGuide, t.code, null);
+}
+window.speechSynthesis && (window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices());
+
+// ── canvas ──
+const canvas=document.getElementById('sig-canvas');
+const ctx=canvas.getContext('2d');
+let drawing=false, hasSig=false;
+function initCanvas(){
+  const r=canvas.parentElement.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=r.width*dpr; canvas.height=130*dpr;
+  ctx.scale(dpr,dpr); ctx.strokeStyle='#1565C0';
+  ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
+}
+initCanvas(); window.addEventListener('resize',initCanvas);
+function getPos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+canvas.addEventListener('pointerdown',e=>{ drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); document.getElementById('canvas-hint').style.display='none'; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove',e=>{ if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+canvas.addEventListener('pointerup',()=>{ drawing=false; hasSig=true; checkReady(); });
+canvas.addEventListener('pointerleave',()=>{ drawing=false; });
+function clearSig(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSig=false; document.getElementById('canvas-hint').style.display='block'; checkReady(); }
+function checkReady(){ const n=document.getElementById('worker-name').value.trim(); document.getElementById('confirm-btn').disabled=!(n&&hasSig); }
+document.getElementById('worker-name').addEventListener('input',checkReady);
+
+// ── confirm ──
+function doConfirm(){
+  const t=LANG[curLang];
+  const name=document.getElementById('worker-name').value.trim();
+  const co=document.getElementById('worker-co').value.trim();
+  const type=document.getElementById('worker-type').value.trim();
+  const n=new Date();
+  const ts=n.toLocaleString(t.code);
+  document.getElementById('confirm-body').textContent=name+(co?' ('+co+')':'')+(type?' — '+type:'')+' '+t['done-suffix'];
+  document.getElementById('confirm-stamp').textContent=t['done-time']+ts;
+  document.getElementById('confirm-box').classList.add('show');
+  document.getElementById('confirm-btn').disabled=true;
+  document.getElementById('sig-area').style.opacity='0.7';
+  document.getElementById('confirm-box').scrollIntoView({behavior:'smooth',block:'center'});
+  speakText(t.doneSpeak, t.code, null);
+}
+
+// ── toast ──
+let tipTimer;
+function showTip(msg){ clearTimeout(tipTimer); document.getElementById('tip-msg').textContent=msg; const t=document.getElementById('tip-toast'); t.style.display='block'; tipTimer=setTimeout(()=>t.style.display='none',5000); }
+function closeTip(){ document.getElementById('tip-toast').style.display='none'; }
+
+// ── boot ──
+switchLang('zh');
+setTimeout(()=>showTip(LANG[curLang].toastStart),1500);
+</script>
+</body>
+</html>
